@@ -22,12 +22,35 @@
     <header>
         <nav>
             <div class="logo"><i class="fas fa-tooth"></i> SonriSalud</div>
-            <ul class="nav-links">
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#nosotros">Clínica</a></li>
-                <li><a href="#servicios">Tratamientos</a></li>
-                <li><a href="#testimonios">Opiniones</a></li>
-            </ul>
+                <div class="nav-links">
+                    <div class="nav-item">
+                        <a href="#inicio">Inicio</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#servicios">Tratamientos <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown">
+                            <a href="#" onclick="openDetail('implante')">Implantes Dentales</a>
+                            <a href="#" onclick="openDetail('estetica')">Estética Dental</a>
+                            <a href="#" onclick="openDetail('ortodoncia')">Ortodoncia Invisible</a>
+                            <a href="#" onclick="openDetail('carillas')">Carillas de Porcelana</a>
+                            <a href="#" onclick="openDetail('blanqueamiento')">Blanqueamiento</a>
+                        </div>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#tecnologia">Tecnología <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown">
+                            <a href="#" onclick="openDetail('flujo-digital')">Flujo Digital</a>
+                            <a href="#" onclick="openDetail('scanner')">Escáner Intraoral</a>
+                            <a href="#" onclick="openDetail('cone-beam')">Tomografía Cone Beam</a>
+                        </div>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#nosotros">Nosotros</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#contacto">Contacto</a>
+                    </div>
+                </div>
             <a href="#agendar" class="btn btn-primary cta-nav">Pedir Turno</a>
             <div class="menu-toggle" style="display: none;"><i class="fas fa-bars"></i></div>
         </nav>
@@ -172,12 +195,46 @@
             </div>
         </section>
 
-        <!-- HTML for the Modal -->
-        <div id="modalTratamiento" class="modal-overlay">
-            <div class="modal-content">
-                <div class="modal-close"><i class="fas fa-times"></i></div>
-                <div class="modal-body">
-                    <!-- Dynamic content will be injected here -->
+        <!-- Detail View Overlay (Sub-pagina Dinamica) -->
+        <div id="detailView" class="detail-view">
+            <div class="detail-close-btn" onclick="closeDetail()"><i class="fas fa-times"></i></div>
+            <div class="detail-container">
+                <div class="breadcrumbs">
+                    <a href="#" onclick="closeDetail()">Inicio</a> / <span id="breadcrumb-category">Tratamientos</span> / <span id="breadcrumb-current">Detalle</span>
+                </div>
+                
+                <div class="detail-header" data-aos="fade-up">
+                    <div class="detail-title">
+                        <h1 id="detail-main-title">Flujo Digital Odontológico</h1>
+                    </div>
+                    <div class="detail-image">
+                        <img id="detail-main-img" src="" alt="">
+                    </div>
+                </div>
+
+                <div class="detail-content">
+                    <div class="info-text" data-aos="fade-right">
+                        <h2>Excelencia y Precisión</h2>
+                        <p id="detail-description"></p>
+                        
+                        <h3>Ventajas Clave:</h3>
+                        <div class="benefit-list" id="detail-benefits">
+                            <!-- Inyectado dinamicamente -->
+                        </div>
+                    </div>
+
+                    <div class="detail-sidebar" data-aos="fade-left">
+                        <div class="sidebar-form">
+                            <h3>Solicitar Turno</h3>
+                            <p style="font-size: 0.9rem; margin-bottom: 20px; color: var(--text-muted);">Completa tus datos para recibir más información sobre este tratamiento.</p>
+                            <form id="detailContactForm">
+                                <input type="text" placeholder="Tu Nombre" required>
+                                <input type="tel" placeholder="Tu WhatsApp" required>
+                                <textarea placeholder="¿Alguna consulta específica?" rows="4"></textarea>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">PEDIR INFORMACIÓN</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -293,11 +350,6 @@
             once: true,
             offset: 100
         });
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100
-        });
 
         // 1. Los Datos (Array de objetos)
         const testimoniosData = [
@@ -321,102 +373,226 @@
         const tratamientosDetallados = {
             implante: {
                 titulo: "Implantes Dentales",
+                categoria: "Tratamientos",
                 imagen: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=800&q=80",
                 descripcion: "Los implantes dentales son raíces artificiales de titanio que se integran al hueso maxilar para brindar un soporte firme a las coronas, devolviendo la funcionalidad y estética natural de tu sonrisa.",
                 beneficios: [
-                    "Recuperación total de la capacidad masticatoria.",
-                    "Prevención de la pérdida ósea facial.",
-                    "Resultados estéticos indistinguibles de un diente natural.",
-                    "Procedimiento indoloro con tecnología mínimamente invasiva."
+                    { icono: "fa-shield-alt", texto: "Recuperación total de la capacidad masticatoria." },
+                    { icono: "fa-bone", texto: "Prevención de la pérdida ósea facial." },
+                    { icono: "fa-smile", texto: "Resultados estéticos indistinguibles de un diente natural." },
+                    { icono: "fa-magic", texto: "Procedimiento indoloro con tecnología mínimamente invasiva." }
                 ]
             },
             estetica: {
                 titulo: "Estética Dental",
+                categoria: "Tratamientos",
                 imagen: "https://images.unsplash.com/photo-1593059818635-a4ed5c6a1e36?auto=format&fit=crop&w=800&q=80",
                 descripcion: "Nuestro enfoque en estética dental combina el arte con la ciencia para mejorar el color, forma y alineación de tus dientes, logrando una armonía facial perfecta mediante carillas y blanqueamiento láser.",
                 beneficios: [
-                    "Diseño de sonrisa digital personalizado.",
-                    "Carillas de porcelana de alta durabilidad.",
-                    "Blanqueamiento de última generación sin sensibilidad.",
-                    "Corrección de manchas y fracturas dentales."
+                    { icono: "fa-pencil-alt", texto: "Diseño de sonrisa digital personalizado." },
+                    { icono: "fa-gem", texto: "Carillas de porcelana de alta durabilidad." },
+                    { icono: "fa-lightbulb", texto: "Blanqueamiento de última generación sin sensibilidad." },
+                    { icono: "fa-check-circle", texto: "Corrección de manchas y fracturas dentales." }
                 ]
             },
             ortodoncia: {
                 titulo: "Ortodoncia Invisible",
+                categoria: "Tratamientos",
                 imagen: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=800&q=80",
                 descripcion: "Alinea tus dientes sin que nadie lo note. Utilizamos alineadores transparentes y removibles que mueven tus dientes gradualmente de forma cómoda, higiénica y discreta.",
                 beneficios: [
-                    "Alineadores 100% estéticos e imperceptibles.",
-                    "Tratamiento más rápido que los brackets tradicionales.",
-                    "Posibilidad de quitarse para comer y cepillarse.",
-                    "Menor cantidad de visitas necesarias al consultorio."
+                    { icono: "fa-eye-slash", texto: "Alineadores 100% estéticos e imperceptibles." },
+                    { icono: "fa-bolt", texto: "Tratamiento más rápido que los brackets tradicionales." },
+                    { icono: "fa-utensils", texto: "Posibilidad de quitarse para comer y cepillarse." },
+                    { icono: "fa-calendar-check", texto: "Menor cantidad de visitas necesarias al consultorio." }
+                ]
+            },
+            carillas: {
+                titulo: "Carillas de Porcelana",
+                categoria: "Tratamientos",
+                imagen: "https://images.unsplash.com/photo-1593059818635-a4ed5c6a1e36?auto=format&fit=crop&w=800&q=80",
+                descripcion: "Las carillas de porcelana son láminas ultra finas que se adhieren a la parte frontal de los dientes para corregir forma, color y posición de manera definitiva y con un brillo natural inigualable.",
+                beneficios: [
+                    { icono: "fa-star", texto: "Estética perfecta de larga duración." },
+                    { icono: "fa-tint", texto: "Resistentes a las manchas de café o tabaco." },
+                    { icono: "fa-tools", texto: "Mínimo desgaste del diente natural." },
+                    { icono: "fa-clock", texto: "Resultados en solo dos sesiones." }
+                ]
+            },
+            blanqueamiento: {
+                titulo: "Blanqueamiento Láser",
+                categoria: "Tratamientos",
+                imagen: "https://images.unsplash.com/photo-1593059818635-a4ed5c6a1e36?auto=format&fit=crop&w=800&q=80",
+                descripcion: "Devuelve el blanco natural a tus dientes de forma segura. Utilizamos tecnología de luz fría que activa el gel blanqueador de manera eficiente y sin causar sensibilidad.",
+                beneficios: [
+                    { icono: "fa-sun", texto: "Aclara hasta 4 tonos en una sola sesión." },
+                    { icono: "fa-user-shield", texto: "Procedimiento supervisado 100% profesional." },
+                    { icono: "fa-leaf", texto: "Cuidado absoluto del esmalte dental." },
+                    { icono: "fa-smile-beam", texto: "Resultados visibles de manera inmediata." }
+                ]
+            },
+            'flujo-digital': {
+                titulo: "Flujo Digital",
+                categoria: "Tecnología",
+                imagen: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=800&q=80",
+                descripcion: "El Flujo Digital es nuestro método de trabajo integral. Desde el diagnóstico hasta la prótesis final, todo se diseña en 3D, garantizando una precisión matemática y un confort total para el paciente.",
+                beneficios: [
+                    { icono: "fa-microchip", texto: "Precisión micrométrica en cada prótesis." },
+                    { icono: "fa-running", texto: "Tratamientos mucho más rápidos." },
+                    { icono: "fa-desktop", texto: "Planificación virtual antes de empezar." },
+                    { icono: "fa-thumbs-up", texto: "Mayor comodidad, sin pastas molestas." }
+                ]
+            },
+            scanner: {
+                titulo: "Escáner Intraoral 3D",
+                categoria: "Tecnología",
+                imagen: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+                descripcion: "Olvídate de los moldes de pasta. Nuestra cámara intraoral captura miles de imágenes por segundo para crear un modelo digital exacto de tu boca en tiempo real.",
+                beneficios: [
+                    { icono: "fa-video", texto: "Captura digital de alta definición." },
+                    { icono: "fa-couch", texto: "Experiencia 100% confortable." },
+                    { icono: "fa-share-alt", texto: "Envío instantáneo al laboratorio." },
+                    { icono: "fa-eye", texto: "Mira tu boca en la pantalla conmigo." }
+                ]
+            },
+            'cone-beam': {
+                titulo: "Tomografía Cone Beam",
+                categoria: "Tecnología",
+                imagen: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80",
+                descripcion: "Diagnóstico tridimensional de máxima precisión. Este escáner nos permite ver tus huesos, nervios y dientes en 360 grados, fundamental para cirugías seguras y precisas.",
+                beneficios: [
+                    { icono: "fa-cube", texto: "Visión 3D completa de la mandíbula." },
+                    { icono: "fa-biohazard", texto: "Baja dosis de radiación." },
+                    { icono: "fa-crosshairs", texto: "Planificación quirúrgica virtual." },
+                    { icono: "fa-search-plus", texto: "Detección temprana de patologías." }
                 ]
             }
         };
 
-        let indiceActual = 0;
-        const textoElement = document.getElementById('testimonio-texto');
-        const autorElement = document.getElementById('testimonio-autor');
-        const starsElement = document.getElementById('testimonio-stars');
-        const container = document.querySelector('.testimonial');
+        // --- Logic for Detailed View ---
+        const detailView = document.getElementById('detailView');
+        const detailBenefits = document.getElementById('detail-benefits');
 
-        function cambiarTestimonio() {
-            container.classList.remove('fade');
-            void container.offsetWidth;
-            container.classList.add('fade');
-
-            textoElement.innerText = testimoniosData[indiceActual].texto;
-            autorElement.innerText = testimoniosData[indiceActual].autor;
-            starsElement.innerText = testimoniosData[indiceActual].estrellas;
-
-            indiceActual = (indiceActual + 1) % testimoniosData.length;
-        }
-
-        cambiarTestimonio();
-        setInterval(cambiarTestimonio, 5000);
-
-        // Modal Logic
-        const modalOverlay = document.getElementById('modalTratamiento');
-        const modalBody = modalOverlay.querySelector('.modal-body');
-        const closeBtn = modalOverlay.querySelector('.modal-close');
-
-        function openModal(id) {
+        function openDetail(id) {
             const data = tratamientosDetallados[id];
             if (!data) return;
 
-            modalBody.innerHTML = `
-                <img src="${data.imagen}" alt="${data.titulo}" class="treatment-img">
-                <h2>${data.titulo}</h2>
-                <p>${data.descripcion}</p>
-                <h3>Beneficios del tratamiento:</h3>
-                <ul>
-                    ${data.beneficios.map(b => `<li>${b}</li>`).join('')}
-                </ul>
-                <a href="#agendar" class="btn btn-primary" onclick="closeModal()">Saber presupuesto</a>
-            `;
+            // Breadcrumbs y Títulos
+            document.getElementById('breadcrumb-category').innerText = data.categoria;
+            document.getElementById('breadcrumb-current').innerText = data.titulo;
+            document.getElementById('detail-main-title').innerText = data.titulo;
+            document.getElementById('detail-description').innerText = data.descripcion;
+            document.getElementById('detail-main-img').src = data.image || data.imagen; // Compatibilidad
 
-            modalOverlay.classList.add('active');
+            // Beneficios
+            detailBenefits.innerHTML = data.beneficios.map(b => `
+                <div class="benefit-card">
+                    <i class="fas ${b.icono}"></i>
+                    <p>${b.texto}</p>
+                </div>
+            `).join('');
+
+            detailView.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Reiniciar AOS para animaciones internas
+            AOS.refresh();
         }
 
-        function closeModal() {
-            modalOverlay.classList.remove('active');
+        function closeDetail() {
+            detailView.classList.remove('active');
             document.body.style.overflow = 'auto';
         }
 
-        closeBtn.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) closeModal();
+        // Clic fuera del contenido para cerrar
+        detailView.addEventListener('click', (e) => {
+            if (e.target === detailView) closeDetail();
         });
 
-        // Update links to open modals
+        // Update links in services to open detail view
         document.querySelectorAll('.learn-more').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const parent = link.closest('.service-card');
                 const id = parent.getAttribute('data-id');
-                openModal(id);
+                openDetail(id);
             });
+        });
+
+        // Detail View Form Submission
+        const detailContactForm = document.getElementById('detailContactForm');
+        detailContactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = detailContactForm.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            btn.disabled = true;
+
+            const formData = {
+                nombre: detailContactForm.querySelector('input[type="text"]').value,
+                telefono: detailContactForm.querySelector('input[type="tel"]').value,
+                tratamiento: document.getElementById('breadcrumb-current').innerText,
+                mensaje: detailContactForm.querySelector('textarea').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/leads', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('¡Gracias! Nos pondremos en contacto contigo pronto para este tratamiento.');
+                    detailContactForm.reset();
+                    closeDetail();
+                } else { throw new Error(); }
+            } catch (error) {
+                alert('Error al enviar. Por favor intenta por WhatsApp.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Contact Form Submission (Main)
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = contactForm.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            btn.disabled = true;
+
+            const formData = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                telefono: document.getElementById('telefono').value,
+                tratamiento: document.getElementById('tratamiento').value,
+                mensaje: document.getElementById('mensaje').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/leads', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('¡Mensaje enviado con éxito! Nos contactaremos pronto.');
+                    contactForm.reset();
+                } else {
+                    throw new Error('Error en el servidor');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al enviar el mensaje. Por favor, intenta de nuevo o contáctanos por WhatsApp.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         });
 
         // Mobile Menu Toggle logic
